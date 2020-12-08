@@ -22,12 +22,64 @@ class Interpreter:
         if token_type == TOKEN_GETER.ID:
             self.consume()
             
+            # Assignment operators
             # For the terminal token, it only needs to match and consume.
             # If it's not matched, it means that is a syntax error.
-            self.match(TOKEN_GETER.EQUAL)
-            
+            # Equal
+            if self.match(TOKEN_GETER.EQUAL):
             # Store the value to symbol table.
-            self.symtab[token_val] = self.expr()
+                self.symtab[token_val] = self.expr()
+            
+            # Plus_Equal
+            elif self.match(TOKEN_GETER.PLUS_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = first_num + second_num
+                self.symtab[first] = result
+
+            # Minus_Equal
+            elif self.match(TOKEN_GETER.MINUS_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = first_num - second_num
+                self.symtab[first] = result
+
+            # Times_Equal
+            elif self.match(TOKEN_GETER.TIMES_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = first_num * second_num
+                self.symtab[first] = result
+
+            # Division_Equal
+            elif self.match(TOKEN_GETER.DIVISION_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = first_num / second_num
+                self.symtab[first] = result
+
+            # Power_Equal
+            elif self.match(TOKEN_GETER.POWER_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = pow(first_num, second_num)
+                self.symtab[first] = result
+
+            # Modulo_Equal
+            elif self.match(TOKEN_GETER.MODULO_EQUAL):
+                first = token_val
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                result = first_num % second_num
+                self.symtab[first] = result
+
+
+
             
         # print statement
         elif token_type == TOKEN_GETER.PRINT:
@@ -54,7 +106,67 @@ class Interpreter:
                 if self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
                     self.consume()
             print (v)
+
+        # add statement
+        elif token_type == TOKEN_GETER.ADD:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = first_num + second_num
+            self.symtab[num[0]] = result
+
+        # subtract statement
+        elif token_type == TOKEN_GETER.SUBTRACT:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = first_num - second_num
+            self.symtab[num[0]] = result
+
+        # times statement
+        elif token_type == TOKEN_GETER.TIMES:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = first_num * second_num
+            self.symtab[num[0]] = result
+
+        # division statement
+        elif token_type == TOKEN_GETER.DIVISION:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = first_num / second_num
+            self.symtab[num[0]] = result
+
+        # power statement
+        elif token_type == TOKEN_GETER.POWER:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = pow(first_num, second_num)
+            self.symtab[num[0]] = result
+
+        # modulo statement
+        elif token_type == TOKEN_GETER.MODULO:
+            num = self.symtab.popitem()
+            first_num = int(num[1])
+            self.consume()
+            second_num = int(self.expr())
+            result = first_num % second_num
+            self.symtab[num[0]] = result
+
+
         
+
+        elif self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
+            self.consume()
+
         else:
             raise Exception('not support token %s', token_type)
     
@@ -70,6 +182,7 @@ class Interpreter:
         elif token_type == TOKEN_GETER.ID:
             self.consume()
             return self.symtab[token_val]
+
     
     def consume(self):
         self.cur_token = self.lexer.next_token()
@@ -78,23 +191,17 @@ class Interpreter:
         if self.cur_token[0] == token_type:
             self.consume()
             return True
-        raise Exception('expecting %s; found %s' % (token_type, self.cur_token[0]))
+        else:
+            return False
+#        raise Exception('expecting %s; found %s' % (token_type, self.cur_token[0]))
 
 if __name__ == '__main__':
     prog = '''
-        name = "Ash Ketchum"
-        
-        charmender_HP = 110
-        squirtle_HP = 125
-        bulbasaur_HP = 150
+        p = 7 ^ 2
+        t = 4 * 3 * 2
+        p %= t
+        print (p)
 
-        charmender_attack = 40
-        squirtle_attack = 35
-        bulbasaur_attack = 25
-        
-        print ("name", name)
-        print (name, "name")
-        print ("Charmender did "+str (charmender_attack)+" damage")
     '''
     lex = TOKEN_GETER.TOKEN_GETER(prog)
     parser = Interpreter(lex)
