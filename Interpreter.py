@@ -78,8 +78,67 @@ class Interpreter:
                 result = first_num % second_num
                 self.symtab[first] = result
 
+            # Condition statement
+            # greater
+            elif self.match(TOKEN_GETER.GREATER):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num > second_num:
+                    return True
+                else:
+                    return False
 
+            # lesser
+            elif self.match(TOKEN_GETER.LESSER):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num < second_num:
+                    return True
+                else:
+                    return False
 
+            # greater_equal
+            elif self.match(TOKEN_GETER.GREATER_EQUAL):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num >= second_num:
+                    return True
+                else:
+                    return False
+
+            # lesser_equal
+            elif self.match(TOKEN_GETER.LESSER_EQUAL):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num <= second_num:
+                    return True
+                else:
+                    return False
+
+            # equivalent 
+            elif self.match(TOKEN_GETER.EQUIVALENT):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num == second_num:
+                    return True
+                else:
+                    return False
+
+            # unequal
+            elif self.match(TOKEN_GETER.UNEQUAL):
+                first_num = self.symtab[token_val]
+                second_num = self.expr()
+                if first_num != second_num:
+                    return True
+                else:
+                    return False
+
+        # comment statement
+        elif token_type == TOKEN_GETER.COMMENT:
+            self.consume()
+            v = str(token_val)
+            print ('#' + v)
+            
             
         # print statement
         elif token_type == TOKEN_GETER.PRINT:
@@ -106,6 +165,7 @@ class Interpreter:
                 if self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
                     self.consume()
             print (v)
+
 
         # add statement
         elif token_type == TOKEN_GETER.ADD:
@@ -195,12 +255,14 @@ class Interpreter:
             return False
 #        raise Exception('expecting %s; found %s' % (token_type, self.cur_token[0]))
 
+
 if __name__ == '__main__':
     prog = '''
         p = 7 ^ 2
         t = 4 * 3 * 2
         p %= t
         print (p)
+        # This is a comment
 
     '''
     lex = TOKEN_GETER.TOKEN_GETER(prog)
