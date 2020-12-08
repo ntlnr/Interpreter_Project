@@ -31,7 +31,13 @@ TIMES_EQUAL = 'TIMES_EQUAL'
 DIVISION_EQUAL = 'DIVISION_EQUAL'
 POWER_EQUAL = 'POWER_EQUAL'
 MODULO_EQUAL = 'MODULO_EQUAL'
-
+GREATER = 'GREATER'
+LESSER = 'LESSER'
+EQUIVALENT = 'EQUIVALENT'
+GREATER_EQUAL = 'GREATER_EQUAL'
+LESSER_EQUAL = 'LESSER_EQUAL'
+UNEQUAL = 'UNEQUAL'
+COMMENT = 'COMMENT'
 
 
 # use LL(1) 
@@ -46,33 +52,51 @@ class TOKEN_GETER:
     def next_token(self):
         while self.cur_c != EOF:
             c = self.cur_c
-            a = self._plus_equal()
-            m = self._minus_equal()
-            t = self._times_equal()
-            d = self._division_equal()
-            p = self._power_equal()
-            mo = self._modulo_equal()
+            add_ = self._plus_equal()
+            minus_ = self._minus_equal()
+            times_ = self._times_equal()
+            division_ = self._division_equal()
+            power_ = self._power_equal()
+            modulo_ = self._modulo_equal()
+            eq_ = self._equivalent()
+            ge_ = self._greater_equal()
+            le_ = self._lesser_equal()
+            uneq_ = self._unequal()
             
-            if c.isspace():
-                self.consume()
-            elif a:
-                return a
-            elif m:
-                return m
-            elif t:
-                return t
-            elif d:
-                return d
-            elif p:
-                return p
-            elif mo:
-                return mo
+            if eq_:
+                return eq_
+            elif ge_:
+                return ge_
+            elif le_:
+                return le_
+            elif uneq_:
+                return uneq_
+            elif add_:
+                return add_
+            elif minus_:
+                return minus_
+            elif times_:
+                return times_
+            elif division_:
+                return division_
+            elif power_:
+                return power_
+            elif modulo_:
+                return modulo_
+            elif c == '#':
+                return self._comment()
             elif c == '[':
                 self.consume()
                 return (LBRACK, c)
             elif c == ']':
                 self.consume()
                 return (RBRACK, c)
+            elif c == '>':
+                self.consume()
+                return (GREATER, c)
+            elif c == '<':
+                self.consume()
+                return (LESSER, c)
             elif c == '(':
                 self.consume()
                 return (LPARENTHESES, c)
@@ -125,6 +149,8 @@ class TOKEN_GETER:
                     return t
                 else:
                     return self._id()
+            elif c.isspace():
+                self.consume()
             else:
                 raise Exception('not support token')
         
@@ -160,6 +186,46 @@ class TOKEN_GETER:
             
             return (PRINT, n)
         
+        return None
+    
+    def _greater_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '>=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (GREATER_EQUAL, n)
+
+        return None
+
+    def _lesser_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '<=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (LESSER_EQUAL, n)
+
+        return None
+
+    def _equivalent(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '==':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (EQUIVALENT, n)
+
+        return None
+
+    def _unequal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '!=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (UNEQUAL, n)
+
         return None
 
     def _plus_equal(self):
@@ -252,6 +318,22 @@ class TOKEN_GETER:
         
         return None
     
+    def _comment(self):
+        self.consume()
+        s = ''
+
+        while self.cur_c != '\n':
+            s += self.cur_c
+            self.consume()
+        if self.cur_c != '\n':
+            raise Exception('comment is not correct')
+
+        self.consume()
+
+        return (COMMENT, s)
+
+
+
     def _string(self):
         quotes_type = self.cur_c
         self.consume()
@@ -274,26 +356,15 @@ class TOKEN_GETER:
         self.cur_c = self.input[self.idx]
         self.idx += 1
 
-
 '''
 if __name__ == '__main__':
     exp = 
         name = "Ash Ketchum"
 
-        charmender_HP = 110
-        squirtle_HP = 125
-        bulbasaur_HP = 150
-
-        charmender_attack = 40
-        squirtle_attack = 35
-        bulbasaur_attack = 25
-
-        turn = 1
-        print (name+"'s Charmender won!")
-        if turn == 1:
-            turn = 0
-        else :
-            turn = 1
+        z != 25
+        
+        # This is a comment
+        
     
     lex = TOKEN_GETER(exp)
     t = lex.next_token()
@@ -301,7 +372,5 @@ if __name__ == '__main__':
     while t[0] != EOF:
         print (t)
         t = lex.next_token()
+
 '''
-
-
-
