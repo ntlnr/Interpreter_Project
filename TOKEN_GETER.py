@@ -18,12 +18,21 @@ STR = 'STR'
 SUBTRACT = 'SUBTRACT'
 MODULO = 'MODULO'
 POWER = 'POWER'
+DIVISION = 'DIVISION'
 LPARENTHESES = 'LPARENTHESES'
 RPARENTHESES = 'RPARENTHESES'
 IF = 'IF'
 ELSE = 'ELSE'
 SIMCOL = 'SIMCOL'
 STR_ = 'STR_'
+PLUS_EQUAL = 'PLUS_EQUAL'
+MINUS_EQUAL = 'MINUS_EQUAL'
+TIMES_EQUAL = 'TIMES_EQUAL'
+DIVISION_EQUAL = 'DIVISION_EQUAL'
+POWER_EQUAL = 'POWER_EQUAL'
+MODULO_EQUAL = 'MODULO_EQUAL'
+
+
 
 # use LL(1) 
 class TOKEN_GETER:
@@ -37,9 +46,27 @@ class TOKEN_GETER:
     def next_token(self):
         while self.cur_c != EOF:
             c = self.cur_c
+            a = self._plus_equal()
+            m = self._minus_equal()
+            t = self._times_equal()
+            d = self._division_equal()
+            p = self._power_equal()
+            mo = self._modulo_equal()
             
             if c.isspace():
                 self.consume()
+            elif a:
+                return a
+            elif m:
+                return m
+            elif t:
+                return t
+            elif d:
+                return d
+            elif p:
+                return p
+            elif mo:
+                return mo
             elif c == '[':
                 self.consume()
                 return (LBRACK, c)
@@ -67,6 +94,9 @@ class TOKEN_GETER:
             elif c == '%':
                 self.consume()
                 return (MODULO, c)
+            elif c == '/':
+                self.consume()
+                return (DIVISION, c)
             elif c == '-':
                 self.consume()
                 return (SUBTRACT, c)
@@ -130,6 +160,66 @@ class TOKEN_GETER:
             
             return (PRINT, n)
         
+        return None
+
+    def _plus_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '+=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (PLUS_EQUAL, n)
+
+        return None
+
+    def _minus_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '-=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (MINUS_EQUAL, n)
+
+        return None
+
+    def _times_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '*=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (TIMES_EQUAL, n)
+
+        return None
+
+    def _division_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '/=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (DIVISION_EQUAL, n)
+
+        return None
+
+    def _power_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '^=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (POWER_EQUAL, n)
+
+        return None
+
+    def _modulo_equal(self):
+        n = self.input[self.idx - 1 : self.idx + 1]
+        if n == '%=':
+            self.idx += 1
+            self.cur_c = self.input[self.idx]
+
+            return (MODULO_EQUAL, n)
+
         return None
 
     def _str(self):
