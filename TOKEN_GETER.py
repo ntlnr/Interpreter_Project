@@ -3,7 +3,6 @@
 
 
 EOF = -1
-
 # token type
 COMMA = 'COMMA'
 EQUAL = 'EQUAL'
@@ -23,6 +22,7 @@ LPARENTHESES = 'LPARENTHESES'
 RPARENTHESES = 'RPARENTHESES'
 IF = 'IF'
 ELSE = 'ELSE'
+ELIF = 'ELIF'
 SIMCOL = 'SIMCOL'
 STR_ = 'STR_'
 PLUS_EQUAL = 'PLUS_EQUAL'
@@ -48,6 +48,8 @@ class TOKEN_GETER:
         self.idx = 1
         
         self.cur_c = input[0]
+        
+        self.COUNTER = 0
     
     def next_token(self):
         while self.cur_c != EOF:
@@ -141,6 +143,9 @@ class TOKEN_GETER:
                 t = self._if()
                 if t: 
                     return t
+                t = self._elif()
+                if t:
+                    return t
                 t = self._else()
                 if t: 
                     return t
@@ -150,7 +155,16 @@ class TOKEN_GETER:
                 else:
                     return self._id()
             elif c.isspace():
+                counter = 0
                 self.consume()
+                while self.cur_c == ' ':
+                    counter += 1
+                    self.consume()
+                    if counter == 4:
+                        self.COUNTER += 1
+                        counter = 0
+                counter = 0
+
             else:
                 raise Exception('not support token')
         
@@ -160,13 +174,14 @@ class TOKEN_GETER:
         return self.cur_c != EOF
     
     def _id(self):
+        counter = self.COUNTER
         n = self.cur_c
         self.consume()
-        while (self.cur_c.isalpha() or self.cur_c == '_'):
+        while (self.cur_c.isalpha() or self.cur_c == '_' or self.cur_c.isdigit()):
             n += self.cur_c
             self.consume()
-            
-        return (ID, n)
+        self.COUNTER = 0    
+        return (ID, n, counter)
     
     def _int(self):
         n = self.cur_c
@@ -179,12 +194,14 @@ class TOKEN_GETER:
         
         
     def _print(self):
+        counter = self.COUNTER
         n = self.input[self.idx - 1 : self.idx + 4]
         if n == 'print':
             self.idx += 4
             self.cur_c = self.input[self.idx]
             
-            return (PRINT, n)
+            self.COUNTER = 0
+            return (PRINT, n, counter)
         
         return None
     
@@ -299,22 +316,38 @@ class TOKEN_GETER:
         return None
     
     def _if(self):
+        counter = self.COUNTER
         n = self.input[self.idx - 1 : self.idx + 1]
         if n == 'if':
             self.idx += 1
             self.cur_c = self.input[self.idx]
             
-            return (IF, n)
+            self.COUNTER = 0
+            return (IF, n, counter)
+        
+        return None
+
+    def _elif(self):
+        counter = self.COUNTER
+        n = self.input[self.idx - 1 : self.idx + 3]
+        if n == 'elif':
+            self.idx += 3
+            self.cur_c = self.input[self.idx]
+            
+            self.COUNTER = 0
+            return (ELIF, n, counter)
         
         return None
     
     def _else(self):
+        counter = self.COUNTER
         n = self.input[self.idx - 1 : self.idx + 3]
         if n == 'else':
             self.idx += 3
             self.cur_c = self.input[self.idx]
             
-            return (ELSE, n)
+            self.COUNTER = 0
+            return (ELSE, n, counter)
         
         return None
     
@@ -328,8 +361,8 @@ class TOKEN_GETER:
         if self.cur_c != '\n':
             raise Exception('comment is not correct')
 
-        self.consume()
-
+#        self.consume()
+        self.COUNTER = 0
         return (COMMENT, s)
 
 
@@ -359,12 +392,9 @@ class TOKEN_GETER:
 '''
 if __name__ == '__main__':
     exp = 
-        name = "Ash Ketchum"
-
-        z != 25
-        
-        # This is a comment
-        
+        eq1 = 2 * -5 + 20
+        print("EQ1: " +str(eq1))
+     
     
     lex = TOKEN_GETER(exp)
     t = lex.next_token()
@@ -372,5 +402,4 @@ if __name__ == '__main__':
     while t[0] != EOF:
         print (t)
         t = lex.next_token()
-
 '''
