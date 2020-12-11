@@ -160,13 +160,17 @@ class Interpreter:
                     self.consume()
                     while self.cur_token[0] == TOKEN_GETER.SIMCOL:
                         self.consume()
-                    while self.cur_token[2] - token_counter1 != 0:
+                    while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter1 != 0):
+                        if not self.lexer.has_next():
+                            break
                         self.consume()
                         while (self.cur_token[0] != TOKEN_GETER.PRINT and 
                             self.cur_token[0] != TOKEN_GETER.IF and 
                             self.cur_token[0] != TOKEN_GETER.ELSE and 
                             self.cur_token[0] != TOKEN_GETER.ID):
                             self.consume()
+                            if not self.lexer.has_next():
+                                break
             
             elif sign == False:
                 while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
@@ -208,13 +212,17 @@ class Interpreter:
                     self.consume()
                     while self.cur_token[0] == TOKEN_GETER.SIMCOL:
                         self.consume()
-                    while self.cur_token[2] - token_counter1 != 0:
+                    while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter1 != 0):
+                        if not self.lexer.has_next():
+                            break
                         self.consume()
                         while (self.cur_token[0] != TOKEN_GETER.PRINT and 
                             self.cur_token[0] != TOKEN_GETER.IF and 
                             self.cur_token[0] != TOKEN_GETER.ELSE and 
                             self.cur_token[0] != TOKEN_GETER.ID):
                             self.consume()
+                            if not self.lexer.has_next():
+                                break
             
             elif sign == False:
                 while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
@@ -414,10 +422,9 @@ if __name__ == '__main__':
         else:
             print("Something went wrong!!!")
 
-        print ("name", name)
-        print (name, "name")
+        print ("name: ", name)
+        print (name)
         print ("Charmender did "+str (charmender_attack)+" damage")
-
     '''
     lex = TOKEN_GETER.TOKEN_GETER(prog)
     parser = Interpreter(lex)
