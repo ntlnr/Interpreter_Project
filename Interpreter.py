@@ -147,57 +147,6 @@ class Interpreter:
             while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
                 self.consume()
             sign = self.stat()
-            if sign == True:
-                while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
-                    self.consume()
-                self.consume()
-                while self.cur_token[2] - token_counter == 1:
-                    self.stat()
-                    if not self.lexer.has_next():
-                        break
-                if self.cur_token[0] == TOKEN_GETER.ELSE:
-                    token_counter1 = self.cur_token[2]
-                    self.consume()
-                    while self.cur_token[0] == TOKEN_GETER.SIMCOL:
-                        self.consume()
-                    while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter1 != 0):
-                        if not self.lexer.has_next():
-                            break
-                        self.consume()
-                        while (self.cur_token[0] != TOKEN_GETER.PRINT and 
-                            self.cur_token[0] != TOKEN_GETER.IF and 
-                            self.cur_token[0] != TOKEN_GETER.ELSE and 
-                            self.cur_token[0] != TOKEN_GETER.ID):
-                            self.consume()
-                            if not self.lexer.has_next():
-                                break
-            
-            elif sign == False:
-                while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
-                    self.consume()
-                self.consume()
-                while self.cur_token[2] - token_counter != 0:
-                    self.consume()
-                    while (self.cur_token[0] != TOKEN_GETER.PRINT and 
-                            self.cur_token[0] != TOKEN_GETER.IF and 
-                            self.cur_token[0] != TOKEN_GETER.ELSE and 
-                            self.cur_token[0] != TOKEN_GETER.ID):
-                        self.consume()
-                if self.cur_token[0] == TOKEN_GETER.ELSE:
-                    token_counter1 = self.cur_token[2]
-                    self.consume()
-                    self.consume()
-                    while self.cur_token[2] - token_counter1 == 1:
-                        self.stat()
-                        if not self.lexer.has_next():
-                            break
-                    
-        elif token_type == TOKEN_GETER.ELIF:
-            token_counter = self.cur_token[2]
-            self.consume()
-            while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
-                self.consume()
-            sign = self.stat()
 
             if sign == True:
                 while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
@@ -207,6 +156,32 @@ class Interpreter:
                     self.stat()
                     if not self.lexer.has_next():
                         break
+
+                if self.cur_token[0] == TOKEN_GETER.ELIF:
+                    token_counter1 = self.cur_token[2]
+                    self.consume()
+                    while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
+                        self.consume()
+                    sign = self.stat()
+
+                    while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
+                        self.consume()
+                    while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                        self.consume()
+                    while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter1 != 0):
+                        if not self.lexer.has_next():
+                            break
+                        self.consume()
+                        while (self.cur_token[0] != TOKEN_GETER.PRINT and 
+                            self.cur_token[0] != TOKEN_GETER.IF and 
+                            self.cur_token[0] != TOKEN_GETER.ELSE and 
+                            self.cur_token[0] != TOKEN_GETER.ID and
+                            self.cur_token[0] != TOKEN_GETER.ELIF):
+                            self.consume()
+                            if not self.lexer.has_next():
+                                break
+
+
                 if self.cur_token[0] == TOKEN_GETER.ELSE:
                     token_counter1 = self.cur_token[2]
                     self.consume()
@@ -219,11 +194,13 @@ class Interpreter:
                         while (self.cur_token[0] != TOKEN_GETER.PRINT and 
                             self.cur_token[0] != TOKEN_GETER.IF and 
                             self.cur_token[0] != TOKEN_GETER.ELSE and 
-                            self.cur_token[0] != TOKEN_GETER.ID):
+                            self.cur_token[0] != TOKEN_GETER.ID and
+                            self.cur_token[0] != TOKEN_GETER.ELIF):
                             self.consume()
                             if not self.lexer.has_next():
                                 break
-            
+                
+                
             elif sign == False:
                 while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
                     self.consume()
@@ -233,16 +210,80 @@ class Interpreter:
                     while (self.cur_token[0] != TOKEN_GETER.PRINT and 
                             self.cur_token[0] != TOKEN_GETER.IF and 
                             self.cur_token[0] != TOKEN_GETER.ELSE and 
-                            self.cur_token[0] != TOKEN_GETER.ID):
+                            self.cur_token[0] != TOKEN_GETER.ID and 
+                            self.cur_token[0] != TOKEN_GETER.ELIF):
                         self.consume()
+
+                if self.cur_token[0] == TOKEN_GETER.ELIF:
+                    token_counter1 = self.cur_token[2]
+                    self.consume()
+                    while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
+                        self.consume()
+                    sign = self.stat()
+
+                    if sign == True:
+                        while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
+                            self.consume()
+                        while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                            self.consume()
+                        while self.cur_token[2] - token_counter1 == 1:
+                            self.stat()
+                            if not self.lexer.has_next():
+                                break
+                        if self.cur_token[0] == TOKEN_GETER.ELSE:
+                            token_counter2 = self.cur_token[2]                     
+                            self.consume()
+                            while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                                self.consume()
+                            while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter2 != 0):
+                                if not self.lexer.has_next():
+                                    break
+                                self.consume()
+                                while (self.cur_token[0] != TOKEN_GETER.PRINT and 
+                                        self.cur_token[0] != TOKEN_GETER.IF and 
+                                        self.cur_token[0] != TOKEN_GETER.ELSE and 
+                                        self.cur_token[0] != TOKEN_GETER.ID and
+                                        self.cur_token[0] != TOKEN_GETER.ELIF):
+                                    self.consume()
+                                    if not self.lexer.has_next():
+                                        break
+                
+                        if self.cur_token[0] == TOKEN_GETER.ELIF:
+                            token_counter2 = self.cur_token[2]
+                            self.consume()
+                            while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
+                                self.consume()
+                            sign = self.stat()
+
+                            while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
+                                self.consume()
+                            while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                                self.consume()
+                            while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter2 != 0):
+                                if not self.lexer.has_next():
+                                    break
+                                self.consume()
+                                while (self.cur_token[0] != TOKEN_GETER.PRINT and 
+                                        self.cur_token[0] != TOKEN_GETER.IF and 
+                                        self.cur_token[0] != TOKEN_GETER.ELSE and 
+                                        self.cur_token[0] != TOKEN_GETER.ID and
+                                        self.cur_token[0] != TOKEN_GETER.ELIF):
+                                    self.consume()
+                                    if not self.lexer.has_next():
+                                        break
+
                 if self.cur_token[0] == TOKEN_GETER.ELSE:
                     token_counter1 = self.cur_token[2]
                     self.consume()
-                    self.consume()
+                    while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                        self.consume()
                     while self.cur_token[2] - token_counter1 == 1:
                         self.stat()
                         if not self.lexer.has_next():
                             break
+
+                
+                        
     
         # print statement
         elif token_type == TOKEN_GETER.PRINT:
@@ -415,16 +456,13 @@ if __name__ == '__main__':
         eq2 = -2 * 3 / 12
         print("EQ2: "+str(eq2))
 
-        if charmender_HP >= 1:
+        if charmender_HP <= 1:
             print(name+"'s Charmender won!")
         elif squirtle_HP >=1:
             print(name+"'s Squirtle won!")
         else:
-            print("Something went wrong!!!")
+            print("something went wrong!")
 
-        print ("name: ", name)
-        print (name)
-        print ("Charmender did "+str (charmender_attack)+" damage")
     '''
     lex = TOKEN_GETER.TOKEN_GETER(prog)
     parser = Interpreter(lex)
