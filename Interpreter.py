@@ -205,7 +205,9 @@ class Interpreter:
                 while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
                     self.consume()
                 self.consume()
-                while self.cur_token[2] - token_counter != 0:
+                while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter != 0):
+                    if not self.lexer.has_next():
+                        break
                     self.consume()
                     while (self.cur_token[0] != TOKEN_GETER.PRINT and 
                             self.cur_token[0] != TOKEN_GETER.IF and 
@@ -213,6 +215,8 @@ class Interpreter:
                             self.cur_token[0] != TOKEN_GETER.ID and 
                             self.cur_token[0] != TOKEN_GETER.ELIF):
                         self.consume()
+                        if not self.lexer.has_next():
+                            break
 
                 if self.cur_token[0] == TOKEN_GETER.ELIF:
                     token_counter1 = self.cur_token[2]
@@ -220,6 +224,8 @@ class Interpreter:
                     while self.cur_token[0] == TOKEN_GETER.LPARENTHESES:
                         self.consume()
                     sign = self.stat()
+                    while self.cur_token[0] == TOKEN_GETER.SIMCOL:
+                        self.consume()
 
                     if sign == True:
                         while self.cur_token[0] == TOKEN_GETER.RPARENTHESES:
@@ -271,6 +277,21 @@ class Interpreter:
                                     self.consume()
                                     if not self.lexer.has_next():
                                         break
+                    if sign == False:
+                        while (not self.lexer.has_next()) or (self.cur_token[2] - token_counter1 != 0):
+                            if not self.lexer.has_next():
+                                break
+                            self.consume()
+                            while (self.cur_token[0] != TOKEN_GETER.PRINT and 
+                                    self.cur_token[0] != TOKEN_GETER.IF and 
+                                    self.cur_token[0] != TOKEN_GETER.ELSE and 
+                                    self.cur_token[0] != TOKEN_GETER.ID and 
+                                    self.cur_token[0] != TOKEN_GETER.ELIF):
+                                self.consume()
+                                if not self.lexer.has_next():
+                                    break
+
+
 
                 if self.cur_token[0] == TOKEN_GETER.ELSE:
                     token_counter1 = self.cur_token[2]
