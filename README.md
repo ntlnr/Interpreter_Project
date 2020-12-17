@@ -1,6 +1,8 @@
 # Interpreter_Project
 The final project for CS4450 of Team Emmm
 
+# Put test codes into main function then you can run the codes.
+
 By using the interpreter, the user can interpret a lot of python files. It implement if/else blocks, variable definitions, and arithmetic operators, and assignment operators, etc.
 
 ## There are two files in the main branch
