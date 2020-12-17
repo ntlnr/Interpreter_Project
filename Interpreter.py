@@ -19,7 +19,7 @@ class Interpreter:
         token_type = self.cur_token[0]
         token_val = self.cur_token[1]
 
-        # Asignment
+        # Assignment
         if token_type == TOKEN_GETER.ID:
             self.consume()
             
