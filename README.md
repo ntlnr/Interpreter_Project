@@ -1,7 +1,7 @@
 # Interpreter_Project
 The final project for CS4450 of Team Emmm
 
-# We implement the all the features in the requirement except for and while loops
+By using the interpreter, the user can interpret a lot of python files. It implement if/else blocks, variable definitions, and arithmetic operators, and assignment operators, etc.
 
 ## There are two files in the main branch
 ### The TOKEN_GETER.py will generate TOKEN stream, and Interpreter.py will interpret it.
